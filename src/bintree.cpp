@@ -4,20 +4,7 @@
 #include <bitset>
 #include <cmath>
 #include <string>
-
-
-BinaryTree::BinaryTree(int root_key=0){
-    tree_height=1;
-    root = treenode::create_node(root_key);
-    is_avl = false;
-}
-
-AVL::AVL(int root_key=0){
-    tree_height=0;
-    root = treenode::create_node(root_key);
-    is_avl = true;
-}
-
+#include <array>
 
 // bool AVL::is_avl = true;
 
@@ -436,26 +423,34 @@ void AVL::rebalance(treenode *r, treenode *root){
     if (is_avl) {
     fixtree(r, root);
     }
-    // if (r != nullptr && is_avl){
-    //     std::cout << r->key << "\n";
-    //     treenode *tmp = r;
-    //     // AVL::update_node_height(tmp);
-    //     while (tmp != nullptr) {
-    //         AVL::update_node_height(tmp);
-    //         AVL::fixtree(tmp);
-    //         tmp=tmp->parent;
-    //     }
+}
 
-    // }
-    // return;
+treenode* AVL::insert_new(treenode *root, int val){
+    auto new_node = insert(root, val);
+    rebalance(new_node, root);
+    return new_node;
+}
+
+void AVL::delete_val(treenode *root, int val){
+    auto deleted_node_parent = delete_value(root, val);
+    rebalance(deleted_node_parent, root);
 }
 
 
-treenode* Heap::find_min() {
+
+treenode* BinaryTree::find_min() {
     treenode *min_node= min(get_root());
     return min_node;
 }
 
+void make_huffman_tree(AVL *priority_queue, std::array& syms, std::array& freqs){
+    int l = 0;
+    int r = 0;
+    for (const auto &i: syms){
+
+    }
+
+}
 
 
 int main(){
@@ -466,11 +461,11 @@ int main(){
     AVL a;
     AVL bsss;
     std::cout<<a.max(a.get_root())->key << "\n";
-    int arr [] = {-6, -2, 5, 7, 12, -8, -7, 6, 8, 8,-7, 15};
-    for (int i=0; i<std::size(arr);i++) {
-        auto nn = a.insert(a.get_root(), arr[i]);
-        std::cout << nn->key << "\n";
-        a.rebalance(nn, a.get_root());
+    int arr[] = {-6, -2, 5, 7, 12, -8, -7, 6, 8, 8,-7, 15};
+    for (int i=0; i<13;i++) {
+        a.insert_new(a.get_root(), arr[i]);
+        // std::cout << nn->key << "\n";
+        // a.rebalance(nn, a.get_root());
     }
     a.in_order_traversal(a.get_root());
     std::cout << "\n";
@@ -493,9 +488,7 @@ int main(){
         // if (arr[i]==-7) assert(false);
         std::cout<<"\n new root, entering: "<<a.get_root()->key <<" " << arr[i]<< " ";
         // a.in_order_traversal(a.get_root());
-        auto pn = a.delete_value(a.get_root(), arr[i]);
-        std::cout << "parent found " << pn << "\n";
-        a.rebalance(pn, a.get_root());
+        a.delete_val(a.get_root(), arr[i]);
         std::cout<<"\nentering successful\n";
         a.prettyprint();
         // a.in_order_traversal(a.get_root());
@@ -518,6 +511,12 @@ int main(){
     // // std::cout<<"nullpointer!";
     // std::cout << a.get_root() << "\n";
     // a.in_order_traversal(a.get_root());
+    // std::map<int, int> m;
+    // m[1] = 2;
+    // m[2] = 5;
+    // for (const auto& [key, value] : m) {
+    //     std::cout << '[' << key << "] = " << value << "; ";
+    // }
     return 0;
 }
 
