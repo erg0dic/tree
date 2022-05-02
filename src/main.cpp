@@ -54,6 +54,9 @@ int main(){
     cout << "functional";
     test another = something_new + something_new2;
     cout << "\n " << another.get_obj_val();
+    string p = "a";
+    p += 'q';
+    cout << p;
 
     return 0;
 }

@@ -21,7 +21,7 @@ class BinaryTree {
         treenode* successor(treenode* treenoderef );
         void in_order_traversal(treenode* noderef );
         treenode* delete_value(treenode *r, int val);
-        treenode* insert(treenode *r, int z); // probably needs opt later
+        treenode* insert(treenode *r, treenode *n); // probably needs opt later
         // recursively delete all nodes/subtrees out of t
         treenode * deletetree(treenode *r);
         void prettyprint();
@@ -48,9 +48,9 @@ class AVL : public BinaryTree {
         // int extract_min(treenode *r); // O(logn)
         ~AVL() {};
         void rebalance(treenode *r, treenode *root);
-        treenode* insert_new(treenode *r, int val);
+        treenode* insert_new(int val);
         void delete_val(treenode *r, int val);
-        treenode* extract_min(treenode *u);
+        treenode* extract_min();
         // int extract_min(treenode *r);
         static void update_height(treenode *r);
         static void fixtree(treenode *r, treenode *root);

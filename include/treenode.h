@@ -13,14 +13,12 @@ class treenode {
         int node_height;
         int key;   // TODO: template this for applications later
         treenode(int key,  treenode *lc,  treenode *rc, treenode *pc, int nh, treenode *htl, treenode *htr, char sym); // construct
-        ~treenode() {std::cout<<"deleting treenode in progress... \n";}; // destruct
+        ~treenode() {std::cout<<"deleting treenode "<< key <<" in progress... \n";}; // destruct
         static treenode* create_node(int value=0); // set a default value maybe? 
         treenode* left();
         treenode* right();
         int get_key();
         friend treenode* clone(const treenode *t);
-
-
 };
 
 // construct
