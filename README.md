@@ -16,4 +16,4 @@ Copy-pasta the following command string in the terminal:
 g++ -O3 main.cpp -o save_out
 ````
 
-[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#<your-project-url>)
+[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/erg0dic/tree)
