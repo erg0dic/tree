@@ -23,7 +23,7 @@ class treenode {
 
 // construct
 treenode::treenode(int keyv=0, treenode *lc=nullptr,
-                  treenode *rc=nullptr, treenode *pc=nullptr, int nh=0, 
+                  treenode *rc=nullptr, treenode *pc=nullptr, int nh=1, 
                   treenode *htl=nullptr, treenode *htr=nullptr, char sym='0') :  
                     key(keyv), left_child(lc), right_child(rc), parent(pc), node_height(nh), 
                     ht_left(htl), ht_right(htr), symbol(sym) {};

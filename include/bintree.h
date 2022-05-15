@@ -47,17 +47,18 @@ class AVL : public BinaryTree {
         AVL(int);
         // int extract_min(treenode *r); // O(logn)
         ~AVL() {};
-        void rebalance(treenode *r, treenode *root);
+        void rebalance(treenode *r);
         treenode* insert_new(int val);
-        void delete_val(treenode *r, int val);
+        void delete_val(int val);
         treenode* extract_min();
         // int extract_min(treenode *r);
         static void update_height(treenode *r);
-        static void fixtree(treenode *r, treenode *root);
+        void fixtree(treenode *r);
         static int BF(treenode *r); // balance factor
         static void update_node_height(treenode *u);
-        static void left_rotate(treenode *x, treenode *root);
-        static void right_rotate(treenode *y, treenode *root);
+        void left_rotate(treenode *x);
+        void right_rotate(treenode *y);
+        void update_node_height_all(treenode *u);
 
 };
 
@@ -68,8 +69,9 @@ BinaryTree::BinaryTree(int root_key=0){
 }
 
 AVL::AVL(int root_key=0){
-    tree_height=0;
+    tree_height=1;
     root = treenode::create_node(root_key);
+    root->node_height=1;
     is_avl = true;
 }
 

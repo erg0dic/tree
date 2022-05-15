@@ -19,7 +19,7 @@ int main(){
     cout <<"write in";
     in = "0000";
     b.push_back(in);
-    // cout << b[0];
+    cout << b[0];
 
     return 0;
 }

@@ -79,10 +79,12 @@ treenode* BinaryTree::max(treenode *x){
 treenode* BinaryTree::insert(treenode *r, treenode *n){
     // base case if nothing is passed. Not actually needed. So this is conventionally the root node
     // assert(is_avl==true);
+    
     while (true){
-           
+        r->node_height += 1;
         if (n->key <= r->key){
             if (r->left_child==nullptr){
+                
                 r->left_child = n;
                 n->parent = r;
                 break;
@@ -166,7 +168,7 @@ treenode* BinaryTree::deletetree(treenode *r){
 
 }
 
-void AVL::left_rotate(treenode *x, treenode *root){
+void AVL::left_rotate(treenode *x){
     if (x==nullptr){
         return;
     }
@@ -191,14 +193,16 @@ void AVL::left_rotate(treenode *x, treenode *root){
     x->parent = y;
     update_node_height(y);
     update_node_height(x);
+    update_node_height(get_root());
 }
 
-void AVL::right_rotate(treenode *y, treenode *root){
+void AVL::right_rotate(treenode *y){
     if (y==nullptr){
         return;
     }
     // turn x's right subtree into y's left subtree
     treenode *x = y->left_child;
+
     y->left_child = x->right_child;
     // set y parent
     if (x->right_child != nullptr){
@@ -206,7 +210,7 @@ void AVL::right_rotate(treenode *y, treenode *root){
     }
     x->parent = y->parent;
     if (y->parent == nullptr){
-        root=x; // root is now x
+        root = x; // root is now x
     }
     else if (y == y->parent->left_child){
         y->parent->left_child = x;
@@ -218,6 +222,8 @@ void AVL::right_rotate(treenode *y, treenode *root){
     y->parent = x;
     update_node_height(x);
     update_node_height(y);
+    update_node_height(get_root());
+    // std::cout << "\n true root is " << get_root()->key << "\n";
 }
 
 treenode* BinaryTree::clone_subtree(const treenode *t){
@@ -356,7 +362,7 @@ void BinaryTree::prettyprint() {
         if (!null_val) {
             print_val = std::to_string(root_copy->key);
             if (is_avl){ // debug the avl e.g. for node_height
-                print_val = std::to_string(root_copy->key);
+                print_val = std::to_string(root_copy->key);// std::to_string(root_copy->key);
                 }
             }
 
@@ -384,7 +390,7 @@ void BinaryTree::prettyprint() {
 
 int height(treenode *u){
     if (u==nullptr) {
-        return -1;
+        return 0;
     }
     else {
         return u->node_height;
@@ -392,11 +398,16 @@ int height(treenode *u){
 }
 
 void AVL::update_node_height(treenode *u){
+    if (u==nullptr){
+        return;
+    }
     
     u->node_height = 1+maxf((height(u->left_child)), height(u->right_child));
 
 }
-
+void AVL::update_node_height_all(treenode *u) {
+    return;
+}
 /* 4 cases for a misbalance (violation of the AVL property):
 Assume Z is the higher left/right successor of X (root)
 and the inductive hypothesis.
@@ -411,27 +422,39 @@ Correct:
     3. by a `right_rotate` of X 
     4.  by `right_rotate` of Z's right child followed by  `left_rotate` of X
 */
-void AVL::fixtree(treenode *u, treenode *root){
+void AVL::fixtree(treenode *u){
     // remember to update node heights before calling this
+    // treenode *u = treenode::create_node()
     while (u!=nullptr) {
     update_node_height(u);
-    if (height(u->left_child)>= 2 + height(u->right_child)){
+    if (height(u->left_child) >= 2 + height(u->right_child)){
         // if(u->left_child != nullptr) { // for safety
+        // std::cout << "\n after `fixtree` node is: " << u->key; //<< " and lefth, righth is: " << height(u->left_child) << "," << height(u->right_child) <<"\n";
+        // std::cout << "\n";
+        // assert(false);
             if (height(u->left_child->left_child) < height(u->left_child->right_child)){
-                left_rotate(u->left_child, root); // i.e. make u.l.l's height bigger  case 4
+                left_rotate(u->left_child); // i.e. make u.l.l's height bigger  case 4
+                // prettyprint();
+                
             }
         // }
-        right_rotate(u, root); // case 3
+        // std::cout << "\n after `fixtree` node is: " << u->key; //<< " and lefth, righth is: " << height(u->left_child) << "," << height(u->right_child) <<"\n";
+        // std::cout << "\n";
+        // prettyprint();
+        right_rotate(u); // case 3
+        // prettyprint();
+        // assert(false);
        
     } 
     // symmetric to above
     else if (height(u->right_child)>= 2+height(u->left_child)){
-        // if(u->right_child != nullptr){          
+        // if(u->right_child != nullptr){     
+            // assert(false);     
             if (height(u->right_child->right_child) < height(u->right_child->left_child)){
-                    right_rotate(u->right_child, root); // i.e. make u.r.r's height bigger case 2
+                    right_rotate(u->right_child); // i.e. make u.r.r's height bigger case 2
             }
         // }
-        left_rotate(u, root); // case 1
+        left_rotate(u); // case 1
        
         }
     u=u->parent;
@@ -449,32 +472,115 @@ int AVL::BF(treenode *r){
     return diff;
 }
 
-void AVL::rebalance(treenode *r, treenode *root){
+void AVL::rebalance(treenode *r){
     if (is_avl) {
-    fixtree(r, root);
+        // std::cout << "\n before `fixtree` node is: " << r->key << "\n";
+        // assert(false);
+        fixtree(r);
     }
 }
 
 treenode* AVL::insert_new(int val){
     root=get_root();
+    // std::cout<<"root is " << root->key << "\n";
     auto new_node = treenode::create_node(val);
     insert(root, new_node);
-    // rebalance(new_node, root);
+    // std::cout << "parent of " << new_node->key << " is " << new_node->parent->key <<"\n";
+    // assert(false);
+    // update_node_height(new_node);
+    // update_node_height_all(root);
+    rebalance(new_node);
+    // prettyprint();
     return new_node;
 }
-
-void AVL::delete_val(treenode *root, int val){
+/*
+3 cases:
+1. root has left null child: roll back tree
+2. root has right null child: roll back tree
+3. neither of the above: surgery. right child becomes new root. 
+  right child's min node's left child is now the left child
+*/
+void AVL::delete_val(int val){
+    bool del_root = false;
+    bool lt_new_root = false;
+    bool rt_new_root = false;
+    // treenode *left_ch;
+    // treenode *right_ch;
     treenode* node = search(get_root(), val);
+    // std::cout<<"\n node is: "<<node->key<<"\n";
+    if (get_root()==node){
+        del_root = true;
+    }
+    // std::cout<<"\n node parent is: "<<node->parent->key<<"\n";
     treenode* deleted_node_parent;
-    if (node !=nullptr) {treenode* deleted_node_parent = node->parent;}
+    if (node !=nullptr && node != get_root()) {deleted_node_parent = node->parent;}
     else {
         deleted_node_parent=nullptr;
     }
     // std::cout<<"parent is: "<<deleted_node_parent->key<<"\n";
-    delete_value(get_root(), val);
-    // if (deleted_node_parent != nullptr){
-    // rebalance(deleted_node_parent, get_root());
-    // }
+    // std::cout<< "\n terminal root is " << right_ch->key;
+    if (del_root) {
+        treenode *left_ch = get_root()->left_child;
+        treenode *right_ch = get_root()->right_child;
+        // std::cout<< "\n terminal root is " << right_ch->key;
+        if (left_ch == nullptr && right_ch != nullptr){
+            rt_new_root = true;
+        }
+        else if (right_ch == nullptr && left_ch != nullptr){
+            lt_new_root = true;
+        }
+        else if (right_ch == nullptr && left_ch == nullptr) {
+            delete root;
+            return;
+        }
+        if (lt_new_root){
+            treenode *temp = root;
+            root = left_ch;
+            root->parent = nullptr;
+            delete temp;
+        }
+        else if (rt_new_root){
+            std::cout<< "\n terminal root is " << right_ch->key;
+            std::cout<< "\n";
+            treenode *temp = root;
+            root = right_ch;
+            root->parent = nullptr;
+            delete temp;
+            // prettyprint();
+            // assert(false);
+        }
+        else {
+                treenode *temp = root;
+                root = right_ch;
+                root->parent = nullptr;
+                delete temp;
+                left_ch->parent = right_ch;
+                treenode *temp2 = right_ch->left_child;
+                right_ch->left_child = left_ch;
+                if (temp2 != nullptr){
+                    if (right_ch->right_child != nullptr) {
+                        treenode *succ = min(right_ch->right_child);
+                        // guaranteed left child is a null ptr
+                        succ->left_child = temp2;
+                        temp2->parent = succ;
+
+                    }
+                    right_ch->right_child = temp2;
+                }
+        }
+        // prettyprint();
+        // std::cout << "\n" << get_root()->key;
+        // std::cout << "\n"; 
+        // assert(false);
+        rebalance(root);
+        }
+    else {
+        delete_value(get_root(), val);
+        if (deleted_node_parent != nullptr){
+            rebalance(deleted_node_parent);
+        }
+    }
+    // assert(false);
 }
 
 treenode* BinaryTree::find_min() {
@@ -486,7 +592,7 @@ treenode* AVL::extract_min(){
     treenode* min_node = find_min();
     treenode* copy_min_node = treenode::create_node(min_node->key);
     copy_min_node->symbol = min_node->symbol;
-    delete_val(get_root(), min_node->key);
+    delete_val(min_node->key);
     std::cout<<"here"<<copy_min_node->key;
     return copy_min_node;
 }
@@ -513,21 +619,26 @@ void make_huffman_tree(std::array<char, 6>& syms, std::array<int, 6>& freqs, int
         nn->symbol=syms[i];
     }
     priority_queue.in_order_traversal(priority_queue.get_root());
+    priority_queue.prettyprint();
+    assert(false);
     // 2. build the huffman tree
     int i =0;
-    std::cout<<"\n"<<"size is "<< priority_queue.treesize(priority_queue.get_root());
+    std::cout<<"\n"<<"size is "<< priority_queue.treesize(priority_queue.get_root()) << "\n";
     int size=0;
     while (true) {
         std::cout<<"iteration "<<i << "\n"; 
         auto min1 = priority_queue.find_min();
         auto k1 = min1->key; 
         auto v1 = min1->symbol;
-        priority_queue.delete_val(priority_queue.get_root(), k1);
+        std::cout << "\n key is: " << priority_queue.get_root()->key << "\n"; 
+        priority_queue.delete_val(k1);
         // priority_queue.in_order_traversal(priority_queue.get_root()); 
         auto min2 = priority_queue.find_min();
         auto k2 = min2->key; 
         auto v2 = min2->symbol;
-        priority_queue.delete_val(priority_queue.get_root(), k2);
+        std::cout << "\n key is: " << priority_queue.get_root()->key << "\n"; 
+        assert(false);
+        priority_queue.delete_val(k2);
 
         std::cout<<"min1, min2 "<<k1 << " "<< k2 << "\n";
         priority_queue.in_order_traversal(priority_queue.get_root()); 
@@ -561,15 +672,17 @@ int main(){
     */
     AVL a;
     AVL bsss;
-    std::cout<<a.max(a.get_root())->key << "\n";
-    int arr[] = {-6, 4, 5, 12, -7, 19, -9, -2, 1, 5, 9, 12};
-    for (int i=0; i<std::size(arr);i++) {
+    // std::cout<<a.max(a.get_root())->key << "\n";
+    int arr[] = {15, 2, 5, 8, 12, 14};// {-6, 4, 5, 12, -7, 19, -9, -2, 1, 5, 9, 12};
+    a.root->key = 15;
+    for (int i=1; i<std::size(arr);i++) {
         auto nn =a.insert_new(arr[i]);
         std::cout << nn->key << "\n";
         // a.rebalance(a.find_min(), a.get_root());
+        // a.prettyprint();
     }
-    a.in_order_traversal(a.get_root());
-    std::cout << "\n";
+    // a.in_order_traversal(a.get_root());
+    // std::cout << "\n";
     // a.is_avl = false; // just to get the heights
     a.prettyprint();
     // assert(false);
@@ -580,30 +693,33 @@ int main(){
     // assert (a.get_root()->key==5);
 
     // std::cout << "\n min val found: " << a.find_min()->key;
-    std::cout<<"\n tree height: "<<a.treeheight(a.get_root(), 0);
-    std::cout<<"\n found key: "<<a.search(a.get_root(), 5)->key;
-    // what has lived must at some point die
-    for (int i=0; i<std::size(arr);i++) {
+    // std::cout<<"\n tree height: "<<a.treeheight(a.get_root(), 0);
+    // std::cout<<"\n found key: "<<a.search(a.get_root(), 5)->key;
+    // // what has lived must at some point die
+    int arr2[] = {12, 15, 2, 5, 8, 14};
+    for (int i=0; i<std::size(arr2);i++) {
         // if (arr[i]==0) std::cout << "\n entering -7 now.... \n parent is: " << a.search(a.get_root(), 0)->key, assert(false);
         // std::cout<<"\n new root: "<<a.get_root()->key <<" ";
         // if (arr[i]==-7) assert(false);
-        std::cout<<"\n new root, entering: "<<a.get_root()->key <<" " << arr[i]<< " ";
+        std::cout<<"\n new root, entering: "<<a.get_root()->key <<" " << arr2[i]<< " ";
         // a.in_order_traversal(a.get_root());
-        a.delete_val(a.find_min(), arr[i]);
+        a.delete_val(arr2[i]);
         std::cout<<"\nentering successful\n";
         a.prettyprint();
         // a.in_order_traversal(a.get_root());
-        std::cout << " "<< arr[i] <<" ";
+        std::cout << " "<< arr2[i] <<" ";
     }
-    // a.in_order_traversal(a.get_root());
-    a.delete_value(a.get_root(), a.get_root()->key);
-    // a.in_order_traversal(a.get_root());
-    std::cout << "\n success!\n";
+    std::cout << "\n";
+    assert(false);
+    // // a.in_order_traversal(a.get_root());
+    // a.delete_value(a.get_root(), a.get_root()->key);
+    // // a.in_order_traversal(a.get_root());
+    // std::cout << "\n success!\n";
     // assert(a.treesize(a.get_root())==0);
     // std::cout<<"aaa \n" << std::endl << "aaa";
     // a.prettyprint(a.get_root(), 0);
 
-    // std::cout<<"testing the huffman tree "<<"\n";
+    std::cout<<"\n testing the huffman tree "<<"\n";
     std::array<int, 6> freqs = {15, 2, 5, 8, 12, 14};
     std::array<char, 6> syms = {'A', 'B', 'C', 'D', 'E', 'F'};
     make_huffman_tree(syms, freqs, 6);
