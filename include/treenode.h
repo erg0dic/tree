@@ -1,5 +1,6 @@
 // #include "bintree.h"
 #include <iostream>
+#include <string>
 class treenode {
     // treenode& operator=(const treenode& ) = delete; // delete the base assignment operator
     // treenode( const treenode & ) = delete;
@@ -9,10 +10,10 @@ class treenode {
         treenode *parent;
         treenode *ht_left; // secret huffman tree left pointer
         treenode *ht_right;
-        char symbol; // huffman encoder's symbol
+        std::string symbol; // huffman encoder's symbol
         int node_height;
         int key;   // TODO: template this for applications later
-        treenode(int key,  treenode *lc,  treenode *rc, treenode *pc, int nh, treenode *htl, treenode *htr, char sym); // construct
+        treenode(int key,  treenode *lc,  treenode *rc, treenode *pc, int nh, treenode *htl, treenode *htr, std::string sym); // construct
         ~treenode() {std::cout<<"deleting treenode "<< key <<" in progress... \n";}; // destruct
         static treenode* create_node(int value=0); // set a default value maybe? 
         treenode* left();
@@ -24,7 +25,7 @@ class treenode {
 // construct
 treenode::treenode(int keyv=0, treenode *lc=nullptr,
                   treenode *rc=nullptr, treenode *pc=nullptr, int nh=1, 
-                  treenode *htl=nullptr, treenode *htr=nullptr, char sym='0') :  
+                  treenode *htl=nullptr, treenode *htr=nullptr, std::string sym="0") :  
                     key(keyv), left_child(lc), right_child(rc), parent(pc), node_height(nh), 
                     ht_left(htl), ht_right(htr), symbol(sym) {};
 

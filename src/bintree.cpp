@@ -339,23 +339,22 @@ void BinaryTree::prettyprint() {
             while (counter < h_counter) {
                 // 0 is a left traversal
                 if (pathbinary.to_string()[16-h_counter+counter]=='0'){
-                    
-                    if (root_copy->left_child !=nullptr) {
-                        root_copy=root_copy->left_child;
-                    }
-                    else {
-                        null_val=true;
-                    }
+                        if (root_copy->left_child !=nullptr) {
+                            root_copy=root_copy->left_child;
+                        }
+                        else {
+                            null_val=true;
+                        }
 
-                }
-                else {
-                    if (root_copy->right_child != nullptr) {
-                        root_copy=root_copy->right_child;
                     }
                     else {
-                        null_val=true;
+                        if (root_copy->right_child != nullptr) {
+                            root_copy=root_copy->right_child;
+                        }
+                        else {
+                            null_val=true;
+                        }
                     }
-                }
                 ++counter;
             }
         std::string print_val = "n"; // default null print
@@ -546,6 +545,7 @@ void AVL::delete_val(int val){
             root = right_ch;
             root->parent = nullptr;
             delete temp;
+            std::cout<< "\n new root is " << root->key;
             // prettyprint();
             // assert(false);
         }
@@ -599,9 +599,11 @@ treenode* AVL::extract_min(){
 
 void huffman_traversal(treenode *ht, std::string code){
     if (ht != nullptr){
-        huffman_traversal(ht->ht_left, code+'0');
-        std::cout<<code<< " for symbol" << " "<< ht<<"\n";
-        huffman_traversal(ht->ht_right, code+'1');
+        huffman_traversal(ht->ht_right, '1'+code);
+        if (ht->ht_left == nullptr && ht->ht_right == nullptr){
+            std::cout<< code<< " for symbol" << " "<< ht->symbol<<"\n";
+        }
+        huffman_traversal(ht->ht_left, '0'+code);
         // add to some vector or hashmap reference.... if the libraries worked!!!
     }
     return;
@@ -614,53 +616,82 @@ void make_huffman_tree(std::array<char, 6>& syms, std::array<int, 6>& freqs, int
     root->symbol = syms[0];
     int array_size = s; // could have replaced with vector.size() if vector was working!!!
     // 1. start off with all the symbols as leaves 
-    for (int i=1;i<array_size-1;i++){
+    for (int i=1;i<array_size;i++){
         auto nn = priority_queue.insert_new(freqs[i]);
         nn->symbol=syms[i];
+        // std::cout << "\n sym is " <<nn->symbol;
+        // std::cout << "\n";
     }
+    // assert(false);
     priority_queue.in_order_traversal(priority_queue.get_root());
-    priority_queue.prettyprint();
-    assert(false);
+    // priority_queue.prettyprint();
+    // assert(false);
     // 2. build the huffman tree
     int i =0;
     std::cout<<"\n"<<"size is "<< priority_queue.treesize(priority_queue.get_root()) << "\n";
     int size=0;
     while (true) {
-        std::cout<<"iteration "<<i << "\n"; 
-        auto min1 = priority_queue.find_min();
+        std::cout<<"\n"<<"iteration "<<i << "\n"; 
+        treenode *min1 = priority_queue.find_min();
         auto k1 = min1->key; 
         auto v1 = min1->symbol;
-        std::cout << "\n key is: " << priority_queue.get_root()->key << "\n"; 
+        treenode *huff1 = treenode::create_node(k1);
+        huff1->ht_left = min1->ht_left;
+        huff1->ht_right = min1->ht_right;
+        huff1->symbol=v1;
         priority_queue.delete_val(k1);
+        std::cout << "\n key1 is: " << k1 << "\n"; 
         // priority_queue.in_order_traversal(priority_queue.get_root()); 
-        auto min2 = priority_queue.find_min();
+        treenode *min2 = priority_queue.find_min();
         auto k2 = min2->key; 
-        auto v2 = min2->symbol;
-        std::cout << "\n key is: " << priority_queue.get_root()->key << "\n"; 
-        assert(false);
-        priority_queue.delete_val(k2);
+        auto v2 = min2->symbol; 
+        treenode *huff2 = treenode::create_node(k2);
+        huff2->ht_left = min2->ht_left;
+        huff2->ht_right = min2->ht_right;
+        huff2->symbol=v2;
+        // assert(false);
+        if (priority_queue.get_root()!= min2 || (min2->left_child != nullptr || min2->right_child != nullptr)) {
+            priority_queue.delete_val(k2);
+            std::cout << "\n key2 is: " << k2 << "\n"; 
 
-        std::cout<<"min1, min2 "<<k1 << " "<< k2 << "\n";
-        priority_queue.in_order_traversal(priority_queue.get_root()); 
+            // std::cout<<"min1, min2 "<<k1 << " "<< k2 << "\n";
+            // std::cout<<" \n min... root is " << priority_queue.tree_height;
+            priority_queue.in_order_traversal(priority_queue.get_root()); 
 
-        int merged_internal_node_val = k1+k2;
-        treenode* merged_node = priority_queue.insert_new(merged_internal_node_val);
-        merged_node->ht_left = treenode::create_node(k1);
-        merged_node->ht_left->symbol=v1;
-        merged_node->ht_right= treenode::create_node(k2);
-        merged_node->ht_left->symbol=v2;
-        size = priority_queue.treesize(priority_queue.get_root());
-        std::cout<<"\n size is "<<size;
-        // if(i==3)assert(false);
-        if (size==1){break;}
+            int merged_internal_node_val = k1+k2;
+            treenode* similar_node = priority_queue.search(priority_queue.get_root(), merged_internal_node_val);
+            if (similar_node != nullptr) similar_node->key += 1; // should avoid clashes with merged node insertion
+            treenode* merged_node = priority_queue.insert_new(merged_internal_node_val);
+            merged_node->ht_right = huff1;//treenode::create_node(k1);
+            // merged_node->ht_right->symbol=v1;
+            std::cout<<"\n left symbol is "<< v1 << "\n";
+            merged_node->ht_left= huff2;//treenode::create_node(k2);
+            // merged_node->ht_left->symbol=v2;
+            std::cout<<"\n right symbol is "<< v2 << "\n";
+            size = priority_queue.treesize(priority_queue.get_root());
+            // priority_queue.prettyprint();
+            std::cout<<"\n size is "<<size;
+            // if(i==3)assert(false);
+            // if (size==1){break;} 
+            }
+        else {
+            priority_queue.delete_val(k2);
+            int merged_internal_node_val = k1+k2;
+            treenode* merged_node =  treenode::create_node(merged_internal_node_val);
+            priority_queue.root = merged_node;
+            merged_node->ht_right = huff1;
+            merged_node->ht_left = huff2; //min2;
+            break;
+        }
+
         
         i+=1;
 
     }
-    std::cout<<"done!";
+    std::cout<<"done!" << "\n";
     // 3. traverse the huffman tree and build the encoding
     huffman_traversal(priority_queue.get_root(), "");
-
+    assert(false);
     // 4. store it in a file and then use it for encoding-decoding files...
 }
 
@@ -709,8 +740,8 @@ int main(){
         // a.in_order_traversal(a.get_root());
         std::cout << " "<< arr2[i] <<" ";
     }
-    std::cout << "\n";
-    assert(false);
+    // std::cout << "\n";
+    // assert(false);
     // // a.in_order_traversal(a.get_root());
     // a.delete_value(a.get_root(), a.get_root()->key);
     // // a.in_order_traversal(a.get_root());
@@ -720,7 +751,7 @@ int main(){
     // a.prettyprint(a.get_root(), 0);
 
     std::cout<<"\n testing the huffman tree "<<"\n";
-    std::array<int, 6> freqs = {15, 2, 5, 8, 12, 14};
+    std::array<int, 6> freqs = {15, 2, 5, 8, 12, 33};
     std::array<char, 6> syms = {'A', 'B', 'C', 'D', 'E', 'F'};
     make_huffman_tree(syms, freqs, 6);
 
