@@ -47,35 +47,6 @@ treenode* BinaryTree::max(treenode *x){
     return x; 
 }
 
-// treenode* BinaryTree::insert(treenode *r, treenode *n){
-//     // base case if nothing is passed. Not actually needed. So this is conventionally the root node
-//     // assert(is_avl==true);
-//     if (r==nullptr) {
-//         r=n;
-//         return r;
-//     }
-
-//     if (n->key <= r->key) {
-//             if (r->left_child==nullptr) {
-//                 n->parent = r;
-//             }
-//             r = insert(r->left_child, n);
-//             // n->parent = r;
-            
-
-//         }
-//     else {
-//                 if (r->right_child==nullptr) {
-//                         n->parent = r;
-//                     }
-                
-//                 r = insert(r->right_child, n);
-//                 // n->parent = r;
-                
-
-//     }
-//     return r;
-
 treenode* BinaryTree::insert(treenode *r, treenode *n){
     // base case if nothing is passed. Not actually needed. So this is conventionally the root node
     // assert(is_avl==true);
@@ -107,17 +78,6 @@ treenode* BinaryTree::insert(treenode *r, treenode *n){
     }
     
     return n;
-
-
-    // // base case
-    // if (new_node != nullptr){
-    // //     std::cout << new_node->key << "\n";
-    // //     treenode *tmp = new_node;
-    // //     AVL::update_node_height(new_node);
-    // //     AVL::fixtree(new_node);
-
-    // return new_node;
-    // }
 
 }
 
@@ -152,9 +112,6 @@ int BinaryTree::treeheight(treenode *r, int height) {
 treenode* BinaryTree::deletetree(treenode *r){
     /*
     internal method
-    Note: Not a good OOP practice to use delete this. 
-    Changed this to the current version that consumes a treenode 
-    pointer arg.  
     */
     if (r==nullptr){
         return nullptr;
@@ -279,12 +236,6 @@ treenode* BinaryTree::delete_value(treenode *r, int val){
     else {
         // root has one child so appropriately set the root to that child and delete it
         treenode *temp = r;
-        // if (r->key==-8){
-        // std::cout << "\n inside the tree extract min " << r << " " << temp << " " << temp->left_child << " " << temp->right_child;
-        //     // assert(false);
-        //     std::cout << "\n" << " parent key is: " << r->parent->right_child->key << "\n";
-        //     assert(r->parent->key == r->key);
-        //     }
         if (r->left_child == nullptr && r->right_child != nullptr) {
             r = r->right_child;
             update_parent_pointers(temp, r);
@@ -305,7 +256,6 @@ treenode* BinaryTree::delete_value(treenode *r, int val){
     }
 
 }
-
 
 void BinaryTree::prettyprint() {
     int h = treeheight(root, 1);
