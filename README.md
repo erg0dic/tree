@@ -1,6 +1,6 @@
 ## A Huffman encoder-decoder based on an AVL tree
 
-**Caution**: The code is not optimized and is purely the outcome of an educational endeavour. 
+**Caution**: The code is not optimized and is purely the outcome of an educational endeavour.
 
 Things that can be added to make this more challenging if I have time: 
 
@@ -13,7 +13,7 @@ Things that can be added to make this more challenging if I have time:
 Copy-pasta the following command string in the terminal:
 
 ````cpp
-g++ -O3 main.cpp -o save_out
+g++ -O3 bintree.cpp -o save_out
 ````
 
 [![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/erg0dic/tree)
