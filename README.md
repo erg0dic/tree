@@ -1,4 +1,5 @@
 ## A Huffman encoder-decoder based on an AVL tree
+## Also a binary decision diagram
 
 **Caution**: The code is not optimized and is purely the outcome of an educational endeavour.
 
